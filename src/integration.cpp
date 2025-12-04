@@ -2,9 +2,11 @@
 #include <cmath>
 #include <stdexcept>
 
-double Integration::leftRectangle(std::function<double(double)> f, double a, double b, int n) {
+using namespace std;
+
+double Integration::leftRectangle(function<double(double)> f, double a, double b, int n) {
     if (n <= 0) {
-        throw std::invalid_argument("Number of nodes must be positive");
+        throw invalid_argument("Number of nodes must be positive");
     }
     
     double h = (b - a) / n;  // Ширина одного интервала
@@ -19,9 +21,9 @@ double Integration::leftRectangle(std::function<double(double)> f, double a, dou
     return sum * h;
 }
 
-double Integration::midpointRule(std::function<double(double)> f, double a, double b, int n) {
+double Integration::midpointRule(function<double(double)> f, double a, double b, int n) {
     if (n <= 0) {
-        throw std::invalid_argument("Number of nodes must be positive");
+        throw invalid_argument("Number of nodes must be positive");
     }
     
     double h = (b - a) / n;  // Ширина одного интервала
@@ -36,9 +38,9 @@ double Integration::midpointRule(std::function<double(double)> f, double a, doub
     return sum * h;
 }
 
-double Integration::trapezoidalRule(std::function<double(double)> f, double a, double b, int n) {
+double Integration::trapezoidalRule(function<double(double)> f, double a, double b, int n) {
     if (n <= 0) {
-        throw std::invalid_argument("Number of nodes must be positive");
+        throw invalid_argument("Number of nodes must be positive");
     }
     
     double h = (b - a) / n;  // Ширина одного интервала
@@ -53,27 +55,27 @@ double Integration::trapezoidalRule(std::function<double(double)> f, double a, d
     return sum * h;
 }
 
-std::vector<std::pair<int, double>> Integration::demonstrateNonConvergence(
-    std::function<double(double)> f, double a, double b, int maxIterations) {
+vector<pair<int, double>> Integration::demonstrateNonConvergence(
+    function<double(double)> f, double a, double b, int maxIterations) {
     
-    std::vector<std::pair<int, double>> results;
+    vector<pair<int, double>> results;
     
     // Начинаем с малого числа узлов и постепенно увеличиваем
     for (int n = 2; n <= maxIterations; ++n) {
         try {
             double integral = trapezoidalRule(f, a, b, n);
             results.push_back({n, integral});
-        } catch (const std::exception& e) {
+        } catch (const exception& e) {
             // Если возникает ошибка (например, деление на ноль в особой точке),
             // записываем NaN
-            results.push_back({n, std::nan("")});
+            results.push_back({n, nan("")});
         }
     }
     
     return results;
 }
 
-double Integration::cauchyPrincipalValue(std::function<double(double)> f, 
+double Integration::cauchyPrincipalValue(function<double(double)> f, 
                                         double a, double b, 
                                         double singularity,
                                         int n, 
@@ -81,12 +83,12 @@ double Integration::cauchyPrincipalValue(std::function<double(double)> f,
     
     // Проверяем, что особенность находится внутри интервала
     if (singularity <= a || singularity >= b) {
-        throw std::invalid_argument("Singularity must be inside the interval (a, b)");
+        throw invalid_argument("Singularity must be inside the interval (a, b)");
     }
     
     // Проверяем параметры
-    if (epsilon <= 0 || epsilon >= std::min(singularity - a, b - singularity)) {
-        throw std::invalid_argument("Epsilon must be positive and smaller than distance to boundaries");
+    if (epsilon <= 0 || epsilon >= min(singularity - a, b - singularity)) {
+        throw invalid_argument("Epsilon must be positive and smaller than distance to boundaries");
     }
     
     // Разбиваем интеграл на два подинтервала, исключая окрестность особенности:

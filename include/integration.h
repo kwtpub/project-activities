@@ -4,6 +4,8 @@
 #include <functional>
 #include <vector>
 
+using namespace std;
+
 /**
  * @brief Класс с методами численного интегрирования
  */
@@ -17,7 +19,7 @@ public:
      * @param n Количество узлов (разбиений)
      * @return Приближенное значение интеграла
      */
-    static double leftRectangle(std::function<double(double)> f, double a, double b, int n);
+    static double leftRectangle(function<double(double)> f, double a, double b, int n);
     
     /**
      * @brief Метод средних прямоугольников (средних точек)
@@ -27,7 +29,7 @@ public:
      * @param n Количество узлов (разбиений)
      * @return Приближенное значение интеграла
      */
-    static double midpointRule(std::function<double(double)> f, double a, double b, int n);
+    static double midpointRule(function<double(double)> f, double a, double b, int n);
     
     /**
      * @brief Метод трапеций
@@ -37,7 +39,7 @@ public:
      * @param n Количество узлов (разбиений)
      * @return Приближенное значение интеграла
      */
-    static double trapezoidalRule(std::function<double(double)> f, double a, double b, int n);
+    static double trapezoidalRule(function<double(double)> f, double a, double b, int n);
     
     /**
      * @brief Демонстрирует отсутствие сходимости метода трапеций при наличии особенностей
@@ -47,8 +49,8 @@ public:
      * @param maxIterations Максимальное число итераций
      * @return Вектор пар (количество узлов, значение интеграла)
      */
-    static std::vector<std::pair<int, double>> demonstrateNonConvergence(
-        std::function<double(double)> f, double a, double b, int maxIterations);
+    static vector<pair<int, double>> demonstrateNonConvergence(
+        function<double(double)> f, double a, double b, int maxIterations);
     
     /**
      * @brief Вычисляет главное значение интеграла по Коши
@@ -63,7 +65,7 @@ public:
      * @param epsilon Малое значение для исключения окрестности особенности
      * @return Главное значение интеграла по Коши
      */
-    static double cauchyPrincipalValue(std::function<double(double)> f, 
+    static double cauchyPrincipalValue(function<double(double)> f, 
                                       double a, double b, 
                                       double singularity,
                                       int n, 

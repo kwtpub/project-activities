@@ -29,14 +29,14 @@ f(x) = 1/(x² + 4x + 3) = 1/((x+1)(x+3))
 │   ├── function.cpp
 │   ├── integration.cpp
 │   └── main.cpp      # Основная программа
-├── CMakeLists.txt    # Файл сборки
+├── Makefile          # Файл сборки
 ├── EXPLANATION.md    # Полное объяснение кода
 └── README.md         # Этот файл
 ```
 
 ## Быстрый старт
 
-### Сборка с Makefile (рекомендуется)
+### Сборка проекта
 
 ```bash
 # Собрать проект
@@ -50,15 +50,6 @@ make interactive
 
 # Очистить собранные файлы
 make clean
-```
-
-### Сборка с CMake
-
-```bash
-mkdir build
-cd build
-cmake ..
-make
 ```
 
 ### Сборка вручную
@@ -114,8 +105,8 @@ g++ -std=c++17 -Wall -o integration \
 ## Требования
 
 - C++17 или выше
-- CMake 3.10+ (опционально)
 - Компилятор: g++, clang++ или MSVC
+- Make (для сборки через Makefile)
 
 ## Автор
 
