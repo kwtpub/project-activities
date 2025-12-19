@@ -5,24 +5,16 @@
 
 using namespace std;
 
-// Функция f(x) = 1/(x^2 + 4x + 3) = 1/((x+1)(x+3))
+// Функция f(x) = 1/(x^2 + 4x + 3) 
 double f(double x) {
     double denominator = x * x + 4.0 * x + 3.0;
-    if (abs(denominator) < 1e-10) {
-        cout << "Ошибка: особенность в точке x = " << fixed << setprecision(10) << x << endl;
-        return nan("");
-    }
     return 1.0 / denominator;
 }
 
 // Первообразная F(x) = 1/2 * ln|(x+1)/(x+3)|
-double F(double x) {
+double F(double x) { // WARN: ЧТО ЭТО ЗА ФУНКЦИЯ 
     double num = abs(x + 1.0);
     double den = abs(x + 3.0);
-    if (num < 1e-10 || den < 1e-10) {
-        cout << "Ошибка: особенность в первообразной при x = " << fixed << setprecision(10) << x << endl;
-        return nan("");
-    }
     return 0.5 * log(num / den);
 }
 
@@ -30,35 +22,36 @@ double F(double x) {
 double exact_integral(double a, double b) {
     double Fa = F(a);
     double Fb = F(b);
-    if (isnan(Fa) || isnan(Fb)) {
-        return nan("");
-    }
     return Fb - Fa;
 }
 
 // Метод левых прямоугольников
-double left_rectangle(double a, double b, int n) {
-    if (n <= 0) {
-        cout << "Ошибка: n должно быть положительным" << endl;
-        return nan("");
-    }
-    
-    double h = (b - a) / n;
-    double sum = 0.0;
-    
-    for (int i = 0; i < n; i++) {
-        double x = a + i * h;
-        sum += f(x);
-    }
-    
-    return sum * h;
+// Метод прямоугольников (левых)
+double rectangles(double start, double end, int parts) 
+{
+   // Вычисляем ширину одного прямоугольника
+   double step = (end - start) / parts;
+   // Сумма площадей прямоугольников
+   double total = 0;
+   
+   // Суммируем площади всех прямоугольников
+   for (int i = 0; i < parts; i++) 
+   {
+   // Вычисляем x-координату левой стороны прямоугольника
+   double x = start + i * step;
+   // Добавляем высоту прямоугольника (значение функции)
+   total += f(x);
+   }
+   
+   // Умножаем сумму высот на ширину для получения общей площади
+   return total * step;
 }
 
 // Метод средних точек
 double midpoint_rule(double a, double b, int n) {
     if (n <= 0) {
         cout << "Ошибка: n должно быть положительным" << endl;
-        return nan("");
+        return NULL;
     }
     
     double h = (b - a) / n;
@@ -73,21 +66,21 @@ double midpoint_rule(double a, double b, int n) {
 }
 
 // Метод трапеций
-double trapezoidal_rule(double a, double b, int n) {
-    if (n <= 0) {
-        cout << "Ошибка: n должно быть положительным" << endl;
-        return nan("");
-    }
-    
-    double h = (b - a) / n;
-    double sum = 0.5 * (f(a) + f(b));
-    
-    for (int i = 1; i < n; i++) {
-        double x = a + i * h;
-        sum += f(x);
-    }
-    
-    return sum * h;
+double trapezoid(double start, double end, int parts) // parts - на сколько частей разбиваем интервал
+{
+  // Вычисляем ширину одного отрезка
+  double step = (end - start) / parts; // Это шаг, с которым мы движемся от одной точки к другой.
+  // Начальная сумма - полусумма значений на краях
+  double total = (f(start) + f(end)) / 2;
+
+  // Суммируем значения функции во всех внутренних точках
+  for (int i = 1; i < parts; i++) 
+  {
+  total += f(start + i * step); //вычисление координат в текущей точке. Пр:i = 1: 0.4 + 1 × 0.3 = 0.7
+  } // i * step - смещение от начала
+
+  // Умножаем накопленную сумму на ширину шага и получаем приближённое значение интеграла.
+  return total * step;
 }
 
 // Проверка наличия особенности на интервале
@@ -103,66 +96,59 @@ int has_singularity(double a, double b) {
     return 0;
 }
 
-void print_header(const string& title) {
-    cout << "\n" << string(60, '=') << "\n";
-    cout << title << "\n";
-    cout << string(60, '=') << "\n";
-}
+
 
 int main() {
-    cout << fixed << setprecision(10);
     
     const int n = 7;
     const int m = 10;
+
+    double A[2] = {0.0, 1.0}; // по условию задания 
+    double B[2] = {-1, 0}; 
+    double C [2]= {-2, 0};
     
     cout << "ЧИСЛЕННОЕ ИНТЕГРИРОВАНИЕ\n";
-    cout << "Функция: f(x) = 1/(x^2 + 4x + 3) = 1/((x+1)(x+3))\n";
+    cout << "Функция: f(x) = 1/(x^2 + 4x + 3)";
     cout << "Параметры: n = " << n << ", m = " << m << "\n";
     
     // Задание 1: Точное значение интеграла на [0, 1]
-    print_header("ЗАДАНИЕ 1: Точное значение интеграла на интервале A = [0, 1]");
-    double a1 = 0.0, b1 = 1.0;
+    cout << "ЗАДАНИЕ 1: Точное значение интеграла на интервале A = [0, 1]" << endl;
     cout << "Функция: f(x) = 1/(x^2 + 4x + 3)\n";
     cout << "Первообразная: F(x) = 1/2 * ln|(x+1)/(x+3)|\n";
-    cout << "Интервал: [" << a1 << ", " << b1 << "]\n\n";
+    cout << "Интервал: [" << A[0] << ", " << A[1] << "]\n\n";
     
-    double exact1 = exact_integral(a1, b1);
-    if (!isnan(exact1)) {
-        cout << "Точное значение интеграла: " << exact1 << "\n";
-    }
-    
+    double result1 = exact_integral(A[0], A[1]); // WARN: возможно затащить вывод программы внутрь функции 
+
+    cout << "Точное значение интеграла: " << result1 << endl;
+
+    cout << endl;     
     // Задание 2: Левое правило
-    print_header("ЗАДАНИЕ 2: Левое правило для n узлов");
-    cout << "Интервал: [" << a1 << ", " << b1 << "]\n";
+    cout << "ЗАДАНИЕ 2: Левое правило для n узлов" << endl;
+    cout << "Интервал: [" << A[0] << ", " << A[1] << "]" << endl;
     cout << "Количество узлов: n = " << n << "\n\n";
     
-    double result2 = left_rectangle(a1, b1, n);
-    if (!isnan(result2)) {
-        cout << "Результат (левое правило): " << result2 << "\n";
-        cout << "Точное значение:            " << exact1 << "\n";
-        cout << "Абсолютная погрешность:     " << abs(result2 - exact1) << "\n";
+    double result2 = rectangles(A[0], A[1], n);
+    if (!isnan(result2)) {// WARN: Точно ли нужен isnan?
+        cout << "Результат по левому правилу: " << result2 << endl;
     }
+
+    cout << endl;
     
     // Задание 3: Правило средних точек
-    print_header("ЗАДАНИЕ 3: Правило средних точек для n узлов");
-    cout << "Интервал: [" << a1 << ", " << b1 << "]\n";
-    cout << "Количество узлов: n = " << n << "\n\n";
+    cout << "ЗАДАНИЕ 3: Правило средних точек для n узлов" << endl;
+    cout << "Интервал: [" << A[0] << ", " << A[1] << "]" << endl;
+    cout << "Количество узлов: n = " << n << "\n\n"; // TODO: что за правило средних точек для n узлов
     
-    double result3 = midpoint_rule(a1, b1, n);
-    if (!isnan(result3)) {
-        cout << "Результат (средние точки):  " << result3 << "\n";
-        cout << "Точное значение:            " << exact1 << "\n";
-        cout << "Абсолютная погрешность:     " << abs(result3 - exact1) << "\n";
-    }
+    double result3 = midpoint_rule(A[0], A[1], n);
+    cout << "Результат (средние точки):  " << result3 << "\n";
+
+    cout << endl;
     
-    // Задание 4: Особенности на [-1, 0]
-    print_header("ЗАДАНИЕ 4: Особенности на B = [-1, 0] и отсутствие сходимости");
-    double a4 = -1.0, b4 = 0.0;
-    cout << "Интервал: [" << a4 << ", " << b4 << "]\n";
-    cout << "Особенность: x = -1 (полюс функции)\n";
-    cout << "Функция: f(x) = 1/((x+1)(x+3)) имеет особенность в x = -1\n\n";
+    // Задание 4: Особенности на [-1, 0] TODO: переписать функцию 
+    cout << "ЗАДАНИЕ 4: Особенности на B = [-1, 0] и отсутствие сходимости" << endl;
+    cout << "Интервал: [" << B[0] << ", " << B[1] << "]\n";
     
-    if (has_singularity(a4, b4)) {
+    if (has_singularity(B[0], B[1])) {
         cout << "ПОДТВЕРЖДЕНО: На интервале есть особенность!\n\n";
     }
     
@@ -171,7 +157,7 @@ int main() {
     cout << string(31, '-') << "\n";
     
     for (int k = 2; k <= m; k++) {
-        double integral = trapezoidal_rule(a4, b4, k);
+        double integral = trapezoid(B[0], B[1], k);
         cout << setw(10) << k << " ";
         if (isnan(integral)) {
             cout << setw(20) << "NaN (ошибка)" << "\n";
@@ -179,10 +165,8 @@ int main() {
             cout << setw(20) << fixed << setprecision(6) << integral << "\n";
         }
     }
-    
-    cout << "\nВывод: Значения не стабилизируются, что указывает на отсутствие сходимости\n";
-    cout << "из-за наличия особенности в точке x = -1.\n";
-    
+
+    // TODO: Реализовать задание 5
     return 0;
 }
 
